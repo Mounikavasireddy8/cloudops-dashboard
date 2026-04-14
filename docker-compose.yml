@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  dashboard:
+    build: .
+    container_name: cloudops-dashboard
+    ports:
+      - "8080:80"
+    environment:
+      - APP_NAME=CloudOpsDashboard
+      - APP_VERSION=1.0
+      - ENVIRONMENT=production
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M

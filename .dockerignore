@@ -1,0 +1,10 @@
+*.log
+*.env
+*.pem
+*.key
+*.cert
+.git
+.gitignore
+README.md
+.aws
+secrets/
