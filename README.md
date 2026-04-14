@@ -5,6 +5,7 @@ deployed live on AWS EC2.
 
 ## Live Deployment
 Application was live at http://13.127.97.204 on AWS EC2
+![CloudOps Dashboard Live on AWS](screenshot.png)
 (stopped to avoid free tier charges — can redeploy in 10 minutes)
 
 ## Tech Stack
