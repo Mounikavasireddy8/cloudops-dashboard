@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudOps Dashboard</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --primary:#0f172a;
+      --secondary:#1e293b;
+      --card:#243044;
+      --accent:#3b82f6;
+      --accent2:#10b981;
+      --text:#e2e8f0;
+      --muted:#94a3b8;
+    }
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--primary);color:var(--text);min-height:100vh}
+
+    /* Header */
+    .header{background:linear-gradient(135deg,#1e3a5f,#0f172a);padding:50px 20px;text-align:center;border-bottom:1px solid #1e3a5f}
+    .header h1{font-size:42px;font-weight:700;color:#fff;margin-bottom:8px}
+    .header h1 span{color:#3b82f6}
+    .header p{color:#93c5fd;font-size:16px;margin-bottom:20px}
+    .badge-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+    .badge{background:rgba(59,130,246,0.2);color:#93c5fd;border:1px solid rgba(59,130,246,0.4);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
+    .badge.green{background:rgba(16,185,129,0.2);color:#6ee7b7;border-color:rgba(16,185,129,0.4)}
+
+    /* Nav */
+    .nav{background:#1e293b;padding:12px 20px;display:flex;justify-content:center;gap:24px;border-bottom:1px solid #243044;position:sticky;top:0;z-index:100}
+    .nav a{color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500;padding:4px 8px;border-radius:4px;transition:color 0.2s}
+    .nav a:hover{color:#3b82f6}
+
+    /* Main */
+    .container{max-width:1100px;margin:0 auto;padding:32px 20px}
+    .section{margin-bottom:40px}
+    .section-title{font-size:20px;font-weight:600;color:#60a5fa;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .section-title::after{content:'';flex:1;height:1px;background:#1e3a5f;margin-left:12px}
+
+    /* Profile */
+    .profile-card{background:var(--secondary);border-radius:12px;padding:28px;display:flex;gap:24px;align-items:flex-start;border:1px solid #243044}
+    .avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#10b981);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;flex-shrink:0}
+    .profile-info h2{font-size:24px;font-weight:600;margin-bottom:4px}
+    .profile-info p{color:#94a3b8;font-size:14px;margin-bottom:12px}
+    .profile-tags{display:flex;gap:6px;flex-wrap:wrap}
+    .tag{background:#0f172a;color:#60a5fa;border:1px solid #1e3a5f;padding:3px 10px;border-radius:6px;font-size:12px}
+
+    /* Stats */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+    .stat-card{background:var(--secondary);border-radius:10px;padding:20px;border:1px solid #243044;text-align:center}
+    .stat-num{font-size:36px;font-weight:700;color:#3b82f6;margin-bottom:4px}
+    .stat-num.green{color:#10b981}
+    .stat-num.amber{color:#f59e0b}
+    .stat-label{color:#94a3b8;font-size:13px}
+
+    /* Skills */
+    .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+    .skill-card{background:var(--secondary);border-radius:10px;padding:20px;border:1px solid #243044;border-left:3px solid #3b82f6}
+    .skill-card.green{border-left-color:#10b981}
+    .skill-card.amber{border-left-color:#f59e0b}
+    .skill-card.purple{border-left-color:#8b5cf6}
+    .skill-card h3{font-size:14px;font-weight:600;color:#e2e8f0;margin-bottom:10px}
+    .skill-tags{display:flex;flex-wrap:wrap;gap:5px}
+    .skill-tag{background:#0f172a;color:#94a3b8;border:1px solid #243044;padding:2px 8px;border-radius:4px;font-size:11px}
+
+    /* Pipeline */
+    .pipeline{background:var(--secondary);border-radius:12px;padding:24px;border:1px solid #243044}
+    .pipeline-steps{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .p-step{background:#0f172a;border:1px solid #3b82f6;color:#60a5fa;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500}
+    .p-arrow{color:#3b82f6;font-size:20px}
+    .pipeline p{color:#94a3b8;font-size:13px}
+
+    /* Projects */
+    .project-card{background:var(--secondary);border-radius:12px;padding:24px;margin-bottom:16px;border:1px solid #243044}
+    .project-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .project-header h3{font-size:16px;font-weight:600}
+    .live-badge{background:#065f46;color:#6ee7b7;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600}
+    .local-badge{background:#1e3a5f;color:#93c5fd;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600}
+    .project-card p{color:#94a3b8;font-size:13px;line-height:1.7;margin-bottom:12px}
+    .tech-row{display:flex;flex-wrap:wrap;gap:6px}
+    .tech{background:#0f172a;color:#60a5fa;border:1px solid #1e3a5f;padding:2px 8px;border-radius:4px;font-size:11px}
+
+    /* Architecture */
+    .arch{background:var(--secondary);border-radius:12px;padding:24px;border:1px solid #243044}
+    .arch-flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .arch-box{background:#0f172a;border:1px solid #3b82f6;border-radius:8px;padding:12px 16px;text-align:center;min-width:100px}
+    .arch-box h4{font-size:12px;font-weight:600;color:#60a5fa;margin-bottom:3px}
+    .arch-box p{font-size:10px;color:#64748b}
+    .arch-arrow{color:#3b82f6;font-size:20px}
+
+    /* Security */
+    .security-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .sec-item{background:var(--secondary);border-radius:8px;padding:14px;border:1px solid #243044;display:flex;gap:10px;align-items:flex-start}
+    .sec-icon{width:28px;height:28px;border-radius:6px;background:rgba(16,185,129,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+    .sec-content h4{font-size:12px;font-weight:600;color:#6ee7b7;margin-bottom:2px}
+    .sec-content p{font-size:11px;color:#64748b;line-height:1.5}
+
+    /* Footer */
+    footer{background:#1e293b;border-top:1px solid #243044;padding:24px;text-align:center;color:#475569;font-size:13px}
+    footer span{color:#3b82f6}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>Mounika Vasireddy</span></h1>
+  <p>B.Tech Computer Science | AWS Cloud & DevOps Engineer</p>
+  <div class="badge-row">
+    <span class="badge">Docker</span>
+    <span class="badge">AWS ECR</span>
+    <span class="badge">AWS ECS</span>
+    <span class="badge">Fargate</span>
+    <span class="badge green">Linux</span>
+    <span class="badge green">nginx</span>
+    <span class="badge green">MySQL</span>
+    <span class="badge">Docker Compose</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#pipeline">Pipeline</a>
+  <a href="#security">Security</a>
+</nav>
+
+<div class="container">
+
+  <!-- Profile -->
+  <div class="section" id="about">
+    <div class="section-title">About me</div>
+    <div class="profile-card">
+      <div class="avatar">MV</div>
+      <div class="profile-info">
+        <h2>Mounika Vasireddy</h2>
+        <p>B.Tech Computer Science Graduate — 2023 | Andhra Pradesh, India</p>
+        <p style="color:#94a3b8;font-size:13px;line-height:1.7;margin-bottom:12px">
+          Passionate about cloud infrastructure and DevOps. Hands-on experience
+          building and deploying containerized applications using Docker and AWS.
+          Built complete CI/CD pipeline from code to live internet deployment
+          on AWS ECS Fargate. Seeking entry-level cloud or DevOps engineer role.
+        </p>
+        <div class="profile-tags">
+          <span class="tag">Docker</span>
+          <span class="tag">AWS Cloud</span>
+          <span class="tag">DevOps</span>
+          <span class="tag">Linux</span>
+          <span class="tag">nginx</span>
+          <span class="tag">MySQL</span>
+          <span class="tag">Git</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Skills -->
+  <div class="section" id="skills">
+    <div class="section-title">Technical skills</div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <h3>Docker</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Dockerfile</span>
+          <span class="skill-tag">docker build</span>
+          <span class="skill-tag">docker run</span>
+          <span class="skill-tag">Docker Compose</span>
+          <span class="skill-tag">Volumes</span>
+          <span class="skill-tag">Networks</span>
+          <span class="skill-tag">Multi-stage builds</span>
+        </div>
+      </div>
+      <div class="skill-card green">
+        <h3>AWS Cloud</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">ECR</span>
+          <span class="skill-tag">ECS Fargate</span>
+          <span class="skill-tag">EC2</span>
+          <span class="skill-tag">VPC</span>
+          <span class="skill-tag">IAM</span>
+          <span class="skill-tag">S3</span>
+          <span class="skill-tag">RDS</span>
+          <span class="skill-tag">CloudWatch</span>
+        </div>
+      </div>
+      <div class="skill-card amber">
+        <h3>Linux & Tools</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Linux CLI</span>
+          <span class="skill-tag">bash</span>
+          <span class="skill-tag">SSH</span>
+          <span class="skill-tag">AWS CLI</span>
+          <span class="skill-tag">Git</span>
+          <span class="skill-tag">GitHub</span>
+          <span class="skill-tag">nginx</span>
+        </div>
+      </div>
+      <div class="skill-card purple">
+        <h3>Databases</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">MySQL</span>
+          <span class="skill-tag">Docker volumes</span>
+          <span class="skill-tag">Data persistence</span>
+          <span class="skill-tag">RDS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <div class="section" id="projects">
+    <div class="section-title">Projects</div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <h3>Student Management System</h3>
+        <span class="live-badge">Deployed on AWS</span>
+      </div>
+      <p>Multi-container web application with nginx frontend serving student data.
+      MySQL database stores records with Docker volume for persistence.
+      Both containers communicate via custom Docker bridge network.
+      Deployed live on AWS ECS Fargate with public internet access.
+      Image stored in Amazon ECR private registry.</p>
+      <div class="tech-row">
+        <span class="tech">Docker</span>
+        <span class="tech">nginx</span>
+        <span class="tech">MySQL 8.0</span>
+        <span class="tech">Docker Compose</span>
+        <span class="tech">Custom Network</span>
+        <span class="tech">Named Volume</span>
+        <span class="tech">AWS ECR</span>
+        <span class="tech">AWS ECS Fargate</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <h3>CloudOps Dashboard</h3>
+        <span class="live-badge">Deployed on AWS</span>
+      </div>
+      <p>Professional portfolio dashboard containerized with Docker following
+      all security best practices. Non-root user, Alpine base image,
+      resource limits, pinned versions. Complete pipeline from local
+      development to AWS ECS Fargate live deployment.</p>
+      <div class="tech-row">
+        <span class="tech">Docker Security</span>
+        <span class="tech">nginx:alpine</span>
+        <span class="tech">Non-root user</span>
+        <span class="tech">AWS ECR</span>
+        <span class="tech">AWS ECS Fargate</span>
+        <span class="tech">Multi-stage build</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Pipeline -->
+  <div class="section" id="pipeline">
+    <div class="section-title">Deployment pipeline</div>
+    <div class="pipeline">
+      <p>Complete pipeline from code to live internet deployment on AWS:</p>
+      <div class="pipeline-steps">
+        <div class="p-step">Write Code</div>
+        <div class="p-arrow">→</div>
+        <div class="p-step">Dockerfile</div>
+        <div class="p-arrow">→</div>
+        <div class="p-step">docker build</div>
+        <div class="p-arrow">→</div>
+        <div class="p-step">Test Local</div>
+        <div class="p-arrow">→</div>
+        <div class="p-step">Push to ECR</div>
+        <div class="p-arrow">→</div>
+        <div class="p-step">ECS Fargate</div>
+        <div class="p-arrow">→</div>
+        <div class="p-step">Live Internet</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture -->
+  <div class="section">
+    <div class="section-title">Application architecture</div>
+    <div class="arch">
+      <p style="color:#94a3b8;font-size:13px">Student Management System — multi-container architecture:</p>
+      <div class="arch-flow">
+        <div class="arch-box">
+          <h4>Browser</h4>
+          <p>localhost:8080</p>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">
+          <h4>nginx container</h4>
+          <p>web-app</p>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">
+          <h4>Docker Network</h4>
+          <p>student-network</p>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">
+          <h4>MySQL container</h4>
+          <p>mysql-db</p>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">
+          <h4>Docker Volume</h4>
+          <p>student-data</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security -->
+  <div class="section" id="security">
+    <div class="section-title">Security practices applied</div>
+    <div class="security-grid">
+      <div class="sec-item">
+        <div class="sec-icon">U</div>
+        <div class="sec-content">
+          <h4>Non-root user</h4>
+          <p>Container runs as appuser — not root</p>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">A</div>
+        <div class="sec-content">
+          <h4>Alpine base image</h4>
+          <p>23MB vs 187MB — minimal attack surface</p>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">V</div>
+        <div class="sec-content">
+          <h4>Pinned versions</h4>
+          <p>nginx:1.25-alpine — stable and predictable</p>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">S</div>
+        <div class="sec-content">
+          <h4>No hardcoded secrets</h4>
+          <p>Passed at runtime via environment variables</p>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">R</div>
+        <div class="sec-content">
+          <h4>Resource limits</h4>
+          <p>256MB RAM — 0.5 CPU cap applied</p>
+        </div>
+      </div>
+      <div class="sec-item">
+        <div class="sec-icon">I</div>
+        <div class="sec-content">
+          <h4>.dockerignore</h4>
+          <p>Secrets and sensitive files excluded</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Built with Docker + AWS — Deployed on AWS ECS Fargate |
+  <span>CloudOps Dashboard</span> |
+  Source on GitHub
+</footer>
+
+</body>
+</html>
