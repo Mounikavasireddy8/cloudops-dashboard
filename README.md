@@ -52,3 +52,32 @@ cloudops-dashboard/
 ## Skills demonstrated
 Docker, Dockerfile, Docker Compose, AWS EC2, SSH, SCP,
 nginx, Alpine Linux, Linux CLI, AWS CLI, DevOps pipeline
+
+# CloudOps Dashboard — Docker + AWS EC2
+
+Personal DevOps portfolio deployed on AWS EC2 using Docker.
+
+## Live Deployment
+![Live on AWS](screenshot.png)
+
+**Was live at:** http://13.127.97.204  
+(stopped to avoid AWS charges — can redeploy in 10 minutes)
+
+## Tech Stack
+- Docker + Dockerfile
+- nginx:1.25-alpine (23MB optimized)
+- Non-root user security
+- AWS EC2 — Amazon Linux 2023
+- SSH + SCP deployment
+
+## How to run locally
+docker compose up -d
+Open http://localhost:8080
+
+## Deployment steps
+1. Launch EC2 — Amazon Linux 2023
+2. SSH into EC2 using .pem key
+3. Install Docker on EC2
+4. SCP project files to EC2
+5. docker build + docker run
+6. Access via EC2 public IP
